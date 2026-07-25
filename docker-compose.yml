@@ -1,0 +1,30 @@
+services:
+  pallas-dev:
+    build: .
+    image: pallas-dev
+    stdin_open: true
+    tty: true
+    command: bash
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - uv-cache:/root/.cache/uv
+      - pallas-cache:/root/.triton
+      - hf-cache:/root/.cache/huggingface
+    environment:
+      - PYTHONUNBUFFERED=1
+      - UV_PROJECT_ENVIRONMENT=/opt/venv
+      - HF_HOME=/root/.cache/huggingface
+      - HF_TOKEN=${HF_TOKEN:-}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+volumes:
+  uv-cache:
+  pallas-cache:
+  hf-cache:
